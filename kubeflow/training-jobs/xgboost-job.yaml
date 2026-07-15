@@ -1,0 +1,25 @@
+apiVersion: "kubeflow.org/v1"
+kind: XGBoostJob
+metadata:
+  name: xgboost-dist-job
+  namespace: kubeflow
+spec:
+  xgbReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: xgboost
+            image: docker.io/kubeflowimages/xgboost-dist-iris:v1.0
+            imagePullPolicy: Always
+    Worker:
+      replicas: 2
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: xgboost
+            image: docker.io/kubeflowimages/xgboost-dist-iris:v1.0
+            imagePullPolicy: Always

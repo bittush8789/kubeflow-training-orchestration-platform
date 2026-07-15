@@ -1,0 +1,50 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Experiment
+metadata:
+  namespace: kubeflow
+  name: random-search-example
+spec:
+  objective:
+    type: maximize
+    goal: 0.99
+    objectiveMetricName: Validation-Accuracy
+  algorithm:
+    algorithmName: random
+  parallelTrialCount: 3
+  maxTrialCount: 12
+  maxFailedTrialCount: 3
+  parameters:
+    - name: lr
+      parameterType: double
+      feasibleSpace:
+        min: "0.01"
+        max: "0.03"
+    - name: num-layers
+      parameterType: int
+      feasibleSpace:
+        min: "2"
+        max: "5"
+  trialTemplate:
+    primaryContainerName: training-container
+    trialParameters:
+      - name: learningRate
+        description: Learning rate for the training model
+        reference: lr
+      - name: numberLayers
+        description: Number of training model layers
+        reference: num-layers
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          spec:
+            containers:
+              - name: training-container
+                image: docker.io/kubeflowimages/katib-example:v0.14.0
+                command:
+                  - "python3"
+                  - "/opt/katib-example/mnist.py"
+                  - "--lr=${trialParameters.learningRate}"
+                  - "--num-layers=${trialParameters.numberLayers}"
+            restartPolicy: Never

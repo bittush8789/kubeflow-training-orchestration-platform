@@ -1,0 +1,33 @@
+name: ML Platform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        pip install kfp pytest flake8
+        
+    - name: Linting
+      run: |
+        flake8 pipelines/
+        
+    - name: Compile Pipeline
+      run: |
+        python kubeflow/pipelines/workflow.py
+        
+    - name: Deploy to KFP (Mock)
+      run: |
+        echo "Deploying enterprise_ml_pipeline.json to Kubeflow"

@@ -1,0 +1,9 @@
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "pytorch-mnist"
+  namespace: kubeflow
+spec:
+  predictor:
+    pytorch:
+      storageUri: "s3://enterprise-model-registry/models/pytorch-mnist/v1"

@@ -1,0 +1,9 @@
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "sklearn-iris"
+  namespace: kubeflow
+spec:
+  predictor:
+    sklearn:
+      storageUri: "s3://enterprise-model-registry/models/sklearn-iris/v1"
